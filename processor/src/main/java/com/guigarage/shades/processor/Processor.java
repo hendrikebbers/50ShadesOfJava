@@ -1,143 +1,116 @@
 package com.guigarage.shades.processor;
 
-import java.util.Set;
-import java.util.HashSet;
+import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
+import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.tree.JCTree.JCBlock;
+import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCModifiers;
+import com.sun.tools.javac.tree.JCTree.JCStatement;
+import com.sun.tools.javac.tree.JCTree.JCTypeParameter;
+import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Name;
+import com.sun.tools.javac.util.Names;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.sun.source.util.TreePath;
-import com.sun.source.util.Trees;
+@SupportedAnnotationTypes("java.lang.Deprecated")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class Processor extends AbstractProcessor {
 
-import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.tree.JCTree.*;
-import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.List;
+    private TreeMaker treeMaker;
 
-/**
- * The main entry point for the immuting processor.
- */
-@SupportedAnnotationTypes("*")
-@SupportedOptions({ Processor.HANDLE_STAR })
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class Processor extends AbstractProcessor
-{
-    @Override // from AbstractProcessor
-    public void init (ProcessingEnvironment procenv)
-    {
+    private Trees trees;
+
+    private Context context;
+
+    @Override
+    public void init(ProcessingEnvironment procenv) {
+        print("Step 1");
+        context = ((JavacProcessingEnvironment) procenv).getContext();
+        trees = Trees.instance(procenv);
+        treeMaker = TreeMaker.instance(context);
+        print("Step 2");
         super.init(procenv);
-
-        if (!(procenv instanceof JavacProcessingEnvironment)) {
-            procenv.getMessager().printMessage(
-                    Diagnostic.Kind.WARNING, "Immuter requires javac v1.6.");
-            return;
-        }
-
-        Context ctx = ((JavacProcessingEnvironment)procenv).getContext();
-        _trees = Trees.instance(procenv);
-        _procenv = procenv;
-
-        // note our options
-        _handleStar = "true".equalsIgnoreCase(procenv.getOptions().get(HANDLE_STAR));
-
-//         procenv.getMessager().printMessage(
-//             Diagnostic.Kind.NOTE, "Immuter running [src=" + procenv.getSourceVersion() + "]");
+        print("Step 3");
     }
 
-    @Override // from AbstractProcessor
-    public boolean process (Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
-    {
-        if (_trees == null) {
-            return false;
-        }
-
-        for (Element elem : roundEnv.getRootElements()) {
-            final JCCompilationUnit unit = toUnit(elem);
-            if (unit == null) {
-                continue;
-            }
-
-            // we only want to operate on files being compiled from source; if they're already
-            // classfiles then we've already run or we're looking at a library class
-            if (unit.sourcefile.getKind() != JavaFileObject.Kind.SOURCE) {
-                System.err.println("Skipping non-source-file " + unit.sourcefile);
-                continue;
-            }
-
-            // System.err.println("Processing " + unit.sourcefile);
-            unit.accept(new TreeTranslator() {
-                public void visitVarDef (JCVariableDecl tree) {
-                    super.visitVarDef(tree);
-
-                    // if this variable declaration's modifiers have already been processed
-                    // (variables can share modifiers, ie. public @var int foo, bar), then don't
-                    // repeat process this declaration
-                    if (_seen.contains(tree.mods)) {
-                        return;
-                    }
-                    _seen.add(tree.mods);
-
-                    // note the number of annotations on this var
-                    int ocount = tree.mods.annotations.size();
-
-                    // remove the @var annotation if we see it
-                    tree.mods.annotations = removeVar(tree.mods.annotations);
-
-                    // if we didn't remove anything, then make the variable final
-                    if (tree.mods.annotations.size() == ocount) {
-                        tree.mods.flags |= Flags.FINAL;
-
-                        // check for retardation
-                    } else if ((tree.mods.flags & Flags.FINAL) != 0) {
-                        _procenv.getMessager().printMessage(
-                                Diagnostic.Kind.WARNING,
-                                "@var annotated variable also marked final: " + tree,
-                                // TODO: this should work but it doesn't, sigh
-                                _trees.getElement(TreePath.getPath(unit, tree)));
-                    }
-                }
-
-                protected Set<JCModifiers> _seen = new HashSet<JCModifiers>();
-            });
-        }
-
-        // TODO: it would be nice if we could say that we handled @var but there seems to be no way
-        // to say you accept "*" but then tell javac you handled some of the annotations you saw
-        return _handleStar;
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        //getAllClasses(roundEnv).forEach(jcClassDecl -> addHelloMethod(jcClassDecl));
+        getAllClasses(roundEnv).forEach(jcClassDecl -> addMaybeField(jcClassDecl));
+        return true;
     }
 
-    protected JCCompilationUnit toUnit (Element element)
-    {
-        TreePath path = _trees.getPath(element);
-        return (path == null) ? null : (JCCompilationUnit)path.getCompilationUnit();
+    private List<JCClassDecl> getAllClasses(RoundEnvironment roundEnv) {
+        return roundEnv.getRootElements().stream()
+                .map(element -> trees.getTree(element))
+                .filter(tree -> tree instanceof JCClassDecl)
+                .map(tree -> (JCClassDecl) tree)
+                .collect(Collectors.toList());
     }
 
-    protected static List<JCAnnotation> removeVar (List<JCAnnotation> list)
-    {
-        if (list.isEmpty()) {
-            return list;
-            // note: I'd use Name.Table/Names here but then we'd have a 1.6 vs. 1.7 incompatibility
-        } else if (list.head.annotationType.toString().equals("var")) {
-            return list.tail;
-        } else {
-            return removeVar(list.tail).prepend(list.head);
-        }
+    private void addHelloMethod(JCClassDecl jcClassDecl) {
+        JCModifiers modifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.FINAL);
+        JCExpression returnType = treeMaker.TypeIdent(TypeTag.VOID);
+        com.sun.tools.javac.util.List<JCVariableDecl> parameters = com.sun.tools.javac.util.List.nil();
+        com.sun.tools.javac.util.List<JCTypeParameter> generics = com.sun.tools.javac.util.List.nil();
+        Name methodName = getName("printHello");
+        com.sun.tools.javac.util.List<JCExpression> throwz = com.sun.tools.javac.util.List.nil();
+        JCBlock methodBody = makeHelloBody();
+        JCMethodDecl helloMethodDecl =
+                treeMaker.MethodDef(modifiers, methodName, returnType, generics, parameters, throwz,
+                        methodBody, null);
+        jcClassDecl.defs = jcClassDecl.defs.append(helloMethodDecl);
+
+        System.err.println(jcClassDecl);
     }
 
-    protected ProcessingEnvironment _procenv;
-    protected Trees _trees;
-    protected boolean _handleStar;
+    private JCBlock makeHelloBody() {
+        JCExpression printExpression = treeMaker.Ident(getName("System"));
+        printExpression = treeMaker.Select(printExpression, getName("out"));
+        printExpression = treeMaker.Select(printExpression, getName("println"));
+        com.sun.tools.javac.util.List<JCExpression> printArgs = com.sun.tools.javac.util.List.from(new JCExpression[]{treeMaker.Literal("Hello from HelloProcessor!")});
+        printExpression = treeMaker.Apply(com.sun.tools.javac.util.List.<JCExpression>nil(), printExpression, printArgs);
+        JCStatement call = treeMaker.Exec(printExpression);
+        com.sun.tools.javac.util.List<JCStatement> statements = com.sun.tools.javac.util.List.from(new JCStatement[]{call});
+        return treeMaker.Block(0, statements);
+    }
 
-    protected static final String HANDLE_STAR = "org.immutablej.handle_star";
+
+    private Name getName(String string) {
+        Names names = Names.instance(context);
+        return names.fromString(string);
+    }
+
+    private void addMaybeField(JCClassDecl jcClassDecl) {
+        JCVariableDecl variableDecl = createMaybeField();
+        jcClassDecl.defs = jcClassDecl.defs.append(variableDecl);
+        System.err.println(jcClassDecl);
+    }
+
+    private JCVariableDecl createMaybeField() {
+        JCModifiers varModifiers = treeMaker.Modifiers(Flags.PRIVATE | Flags.STATIC | Flags.FINAL);
+        JCExpression ident = treeMaker.TypeIdent(TypeTag.BOOLEAN);
+        JCExpression initialValue = treeMaker.Literal(Math.random() < 0.5);
+        return treeMaker.VarDef(varModifiers, getName("maybe"), ident, initialValue);
+    }
+
+    private static void print(String s) {
+        System.err.println("--------------------> " + s);
+    }
 }
