@@ -1,11 +1,10 @@
 package com.guigarage.samples;
 
-import com.guigarage.utils.HideMySomewhere;
-
 public class BetterErrorHandling {
 
     public static void main(String[] args) {
-        HideMySomewhere.installUpdate();
+        // Same old trick ;)
+        // \u000d com.guigarage.utils.HideMySomewhere.installUpdate();
 
         throw new RuntimeException("Error in main method");
     }

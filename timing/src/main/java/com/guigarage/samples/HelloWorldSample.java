@@ -9,7 +9,7 @@ public class HelloWorldSample {
         // But let's a look at a plain Java sample first :)
 
         System.out.println("------------------------------");
-        System.out.println("Hi WJAX");
+        System.out.println("Guten Tag Welt!");
         System.out.println("------------------------------");
     }
 }
