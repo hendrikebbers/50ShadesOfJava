@@ -26,3 +26,4 @@ hs_err_pid*
 processor/target
 .DS_Store
 maybe/target
+timing/target
