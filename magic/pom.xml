@@ -11,7 +11,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>processor</artifactId>
+    <artifactId>magic</artifactId>
 
     <build>
         <plugins>

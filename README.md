@@ -69,3 +69,9 @@ mvn exec:java -Dexec.mainClass="com.guigarage.samples.SampeSampleList"
 mvn clean verify
 cd samples
 mvn exec:java -Dexec.mainClass="com.guigarage.samples.TwoLittleIntegers"
+
+## Gray
+
+mvn clean install
+cd gray
+mvn exec:java -Dexec.mainClass="com.guigarage.shades.gray.Sample1"

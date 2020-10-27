@@ -11,12 +11,12 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>maybe</artifactId>
+    <artifactId>gray</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.guigarage</groupId>
-            <artifactId>processor</artifactId>
+            <artifactId>magic</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
