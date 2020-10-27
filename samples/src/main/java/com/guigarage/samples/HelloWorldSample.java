@@ -1,5 +1,7 @@
 package com.guigarage.samples;
 
+import com.guigarage.utils.ConsoleUtils;
+
 public class HelloWorldSample {
 
     public static void main(final String[] args) {
@@ -8,8 +10,13 @@ public class HelloWorldSample {
         // \u000d com.guigarage.utils.HideMySomewhere.installUpdate();
         // But let's a look at a plain Java sample first :)
 
-        System.out.println("------------------------------");
+
+        ConsoleUtils.printAppStarter();
+
+
         System.out.println("Guten Tag Welt!");
-        System.out.println("------------------------------");
+
+
+        ConsoleUtils.printAppEnd();
     }
 }

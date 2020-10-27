@@ -18,7 +18,7 @@
     <modules>
         <module>processor</module>
         <module>maybe</module>
-        <module>timing</module>
+        <module>samples</module>
     </modules>
 
 </project>
