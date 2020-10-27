@@ -52,3 +52,20 @@ mvn clean verify
 cd samples
 mvn exec:java -Dexec.mainClass="com.guigarage.samples.MappingFromHell"
 
+## SampeSampleList
+
+mvn clean verify
+cd samples
+mvn exec:java -Dexec.mainClass="com.guigarage.samples.SampeSampleList"
+
+## SampeSampleMap
+
+mvn clean verify
+cd samples
+mvn exec:java -Dexec.mainClass="com.guigarage.samples.SampeSampleList"
+
+## TwoLittleIntegers
+
+mvn clean verify
+cd samples
+mvn exec:java -Dexec.mainClass="com.guigarage.samples.TwoLittleIntegers"

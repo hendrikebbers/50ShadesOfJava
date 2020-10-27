@@ -2,7 +2,7 @@ package com.guigarage.samples;
 
 import java.util.List;
 
-public class SameSample2 {
+public class SameSampleList {
 
     public static void main(String[] args) {
         final int i = 7;

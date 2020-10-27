@@ -3,16 +3,14 @@ package com.guigarage.samples;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
-public class SameSample {
+public class SameSampleMap {
 
     public static void main(String[] args) {
-        final String a = UUID.randomUUID().toString().substring(0, 4);
+        final char[] chars = {'H', 'e', 'l', 'l', 'o'};
 
-        String key = a;
-        String value = new String(a);
+        String key = new String(chars);
+        String value = new String(chars);
 
         Map<String, String> map1 = createMap(key, value);
         Map<String, String> map2 = createAnotherMap(key, key);
