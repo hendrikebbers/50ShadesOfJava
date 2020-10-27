@@ -1,4 +1,4 @@
-package com.guigarage.shades.maybe;
+package com.guigarage.shades.gray;
 
 @Deprecated
 public class Sample1 {

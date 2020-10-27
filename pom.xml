@@ -16,8 +16,8 @@
     </properties>
 
     <modules>
-        <module>processor</module>
-        <module>maybe</module>
+        <module>magic</module>
+        <module>gray</module>
         <module>samples</module>
     </modules>
 

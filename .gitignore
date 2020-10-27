@@ -28,3 +28,5 @@ processor/target
 maybe/target
 timing/target
 samples/target
+gray/target
+magic/target
