@@ -14,7 +14,7 @@ public class HelloWorldSample {
         ConsoleUtils.printAppStarter();
 
 
-        System.out.println("Guten Tag Welt!");
+        System.out.println("Guten Tag Konferenz");
 
 
         ConsoleUtils.printAppEnd();

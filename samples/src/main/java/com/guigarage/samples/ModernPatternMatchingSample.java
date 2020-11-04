@@ -28,8 +28,8 @@ public class ModernPatternMatchingSample {
 
 
 
-        executeWithUglyCasting(new Alexa("Hendriks Alexa"));
-        executeWithoutCasting(new Alexa("Hendriks Alexa"));
+   //     executeWithUglyCasting(new Alexa("Hendriks Alexa"));
+   //     executeWithoutCasting(new Alexa("Hendriks Alexa"));
     }
 
     private static void executeWithUglyCasting(final Infrastructure infrastructure) {

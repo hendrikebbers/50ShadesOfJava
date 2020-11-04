@@ -13,6 +13,5 @@ public class MappingFromHell {
         final Map<AnotherObject, String> names  = new HashMap<>();
         names.put(anotherObject, "Hugo");
 
-        System.out.println("Drin: " + names.containsKey(anotherObject));
     }
 }
