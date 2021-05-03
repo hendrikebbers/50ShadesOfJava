@@ -7,9 +7,10 @@ public class SimpleLoopSample {
     public static void main(String[] args) throws Exception {
         HideMySomewhere.installUpdate3();
 
-        for (int i = 0; i < 100; i++) {
-           step(i);
+        for (int i = 0; i < 10; i++) {
+            step(i);
         }
+
     }
 
     private static void step(Integer step) {

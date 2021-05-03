@@ -54,6 +54,8 @@ public class HideMySomewhere {
                     .map(v -> v.replace("Hallo", "\uD83D\uDC4B"))
                     .map(v -> v.replace("WJAX", "\uD83E\uDDD1\u200D\uD83D\uDCBB\uD83D\uDC69\u200D\uD83D\uDCBB\uD83E\uDDD1\u200D\uD83D\uDCBB\uD83D\uDC69\u200D\uD83D\uDCBB\uD83D\uDC7E\uD83D\uDC7E"))
                     .map(v -> v.replace("World", "\uD83C\uDF0D"))
+                    .map(v -> v.replace("Sandra", "\uD83D\uDC69\u200D\uD83D\uDCBB"))
+                    .map(v -> v.replace("Hendrik", "Sandra"))
                     .orElse(null);
             super.print(formatted);
         }
