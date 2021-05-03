@@ -18,6 +18,12 @@ public class SameSampleMap {
         System.out.println(map1);
         System.out.println(map2);
 
+        if(map1.equals(map2)) {
+            System.out.println("Sind gleich");
+        } else {
+            System.out.println("Sind nicht gleich");
+        }
+
         if(map2.equals(map1)) {
             System.out.println("Sind gleich");
         } else {

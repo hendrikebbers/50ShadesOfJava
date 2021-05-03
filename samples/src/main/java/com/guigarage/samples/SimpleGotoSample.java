@@ -1,6 +1,6 @@
 package com.guigarage.samples;
 
-public class GotoSample {
+public class SimpleGotoSample {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Start");

@@ -20,13 +20,19 @@ public class SameSampleList {
         }
     }
 
+
+
+
+
+
+
     public static List wrapInList(int i) {
         // Kommentar damit man den Inhalt nicht sieht...
         return List.of(i);
     }
 
-    public static List wrapInAnotherList(int i) {
+    public static List wrapInAnotherList(long i) {
         // Kommentar damit man den Inhalt nicht sieht...
-        return List.of((long) i);
+        return List.of(i);
     }
 }
